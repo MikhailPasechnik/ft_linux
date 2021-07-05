@@ -160,5 +160,57 @@ time {                                             \
         --enable-languages=c,c++                   \
     && make -j4 && make install;                   \
 }
+
+cd ..
+cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
+  `dirname $($LFS_TGT-gcc -print-libgcc-file-name)`/install-tools/include/limits.h
 ```
 
+
+### [Linux API Headers for Glibc](https://www.linuxfromscratch.org/lfs/view/stable/chapter05/linux-headers.html)
+
+```bash
+cd $LFS/sources
+tar -xf linux-5.10.17.tar.xz
+cd linux-5.10.17
+make mrproper
+make headers
+
+find usr/include -name '.*' -delete
+rm usr/include/Makefile
+cp -rv usr/include $LFS/usr
+
+```
+
+### [Glibc](https://www.linuxfromscratch.org/lfs/view/stable/chapter05/glibc.html)
+
+```bash
+cd $LFS/sources
+tar -xf glibc-2.33.tar.xz
+cd glibc-2.33
+
+case $(uname -m) in
+    i?86)   ln -sfv ld-linux.so.2 $LFS/lib/ld-lsb.so.3
+    ;;
+    x86_64) ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64
+            ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64/ld-lsb-x86-64.so.3
+    ;;
+esac
+
+patch -Np1 -i ../glibc-2.33-fhs-1.patch
+
+mkdir -v build
+cd build
+
+time {                                          \
+    ../configure                                \
+      --prefix=/usr                             \
+      --host=$LFS_TGT                           \
+      --build=$(../scripts/config.guess)        \
+      --enable-kernel=3.2                       \
+      --with-headers=$LFS/usr/include           \
+      libc_cv_slibdir=/lib                      \
+    && make -j4 && make DESTDIR=$LFS install;   \
+}
+
+```
