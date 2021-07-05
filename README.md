@@ -214,3 +214,49 @@ time {                                          \
 }
 
 ```
+
+#### Sanity check
+
+```bash
+echo 'int main(){}' > dummy.c
+$LFS_TGT-gcc dummy.c
+readelf -l a.out | grep '/ld-linux'
+```
+
+Should be like this
+
+`      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]`
+
+
+```bash
+rm -v dummy.c a.out
+```
+
+Finnaly install headers
+
+```bash
+$LFS/tools/libexec/gcc/$LFS_TGT/10.2.0/install-tools/mkheaders
+```
+
+### [Libstdc++](https://www.linuxfromscratch.org/lfs/view/stable/chapter05/gcc-libstdc++-pass1.html)
+
+```bash
+cd $LFS/sources/gcc-10.2.0
+mkdir -v build-libstdcpp
+cd build-libstdcpp
+
+time {                              \
+../libstdc++-v3/configure           \
+    --host=$LFS_TGT                 \
+    --build=$(../config.guess)      \
+    --prefix=/usr                   \
+    --disable-multilib              \
+    --disable-nls                   \
+    --disable-libstdcxx-pch         \
+    --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/10.2.0   \
+    && make -j4 && make DESTDIR=$LFS install;                   \
+}
+```
+
+## [Cross Compiling Temporary Tools](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/chapter06.html)
+
