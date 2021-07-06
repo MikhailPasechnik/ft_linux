@@ -332,3 +332,94 @@ mv $LFS/usr/bin/bash $LFS/bin/bash
 ln -sv bash $LFS/bin/sh
 ```
 
+### [Coreutils](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/coreutils.html)
+
+```bash
+cd $LFS/sources
+tar -xf coreutils-8.32.tar.xz
+cd coreutils-8.32
+
+./configure --prefix=/usr                     \
+            --host=$LFS_TGT                   \
+            --build=$(build-aux/config.guess) \
+            --enable-install-program=hostname \
+            --enable-no-install-program=kill,uptime
+
+make -j4
+make DESTDIR=$LFS install
+
+mv -v $LFS/usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} $LFS/bin
+mv -v $LFS/usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm}        $LFS/bin
+mv -v $LFS/usr/bin/{rmdir,stty,sync,true,uname}               $LFS/bin
+mv -v $LFS/usr/bin/{head,nice,sleep,touch}                    $LFS/bin
+mv -v $LFS/usr/bin/chroot                                     $LFS/usr/sbin
+mkdir -pv $LFS/usr/share/man/man8
+mv -v $LFS/usr/share/man/man1/chroot.1                        $LFS/usr/share/man/man8/chroot.8
+sed -i 's/"1"/"8"/'                                           $LFS/usr/share/man/man8/chroot.8
+
+```
+
+### [Diffutils](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/diffutils.html)
+
+```bash
+cd $LFS/sources
+tar -xf diffutils-3.7.tar.xz 
+cd diffutils-3.7
+
+./configure --prefix=/usr --host=$LFS_TGT
+make -j4
+make DESTDIR=$LFS install
+
+```
+
+### [File](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/file.html)
+
+```bash
+cd $LFS/sources
+tar -xf file-5.39.tar.gz
+cd file-5.39
+mkdir build
+pushd build
+  ../configure --disable-bzlib      \
+               --disable-libseccomp \
+               --disable-xzlib      \
+               --disable-zlib
+  make -j4
+popd
+./configure --prefix=/usr --host=$LFS_TGT --build=$(./config.guess)
+make FILE_COMPILE=$(pwd)/build/src/file
+make DESTDIR=$LFS install
+
+```
+
+### [Findutils](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/findutils.html)
+
+```bash
+cd $LFS/sources
+tar -xf findutils-4.8.0.tar.xz
+cd findutils-4.8.0
+./configure --prefix=/usr   \
+            --host=$LFS_TGT \
+            --build=$(build-aux/config.guess)
+make -j4
+make DESTDIR=$LFS install
+mv -v $LFS/usr/bin/find $LFS/bin
+sed -i 's|find:=${BINDIR}|find:=/bin|' $LFS/usr/bin/updatedb
+```
+
+### [Gawk](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/gawk.html)
+
+```bash
+cd $LFS/sources
+tar -xf gawk-5.1.0.tar.xz
+cd gawk-5.1.0
+sed -i 's/extras//' Makefile.in
+./configure --prefix=/usr   \
+            --host=$LFS_TGT \
+            --build=$(./config.guess)
+
+make -j4
+make DESTDIR=$LFS install
+
+```
+
