@@ -1,4 +1,5 @@
-# Building and running LFS
+# Building and running LFS 
+# https://www.linuxfromscratch.org/lfs/view/stable/index.html
 
 ## [Build space](https://www.linuxfromscratch.org/lfs/view/stable/chapter02/creatingpartition.html)
 
