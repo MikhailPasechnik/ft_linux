@@ -260,3 +260,74 @@ time {                              \
 
 ## [Cross Compiling Temporary Tools](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/chapter06.html)
 
+### [M4](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/m4.html)
+
+```bash
+cd $LFS/sources
+tar -xf m4-1.4.18.tar.xz 
+cd m4-1.4.18
+sed -i 's/IO_ftrylockfile/IO_EOF_SEEN/' lib/*.c
+echo "#define _IO_IN_BACKUP 0x100" >> lib/stdio-impl.h
+
+time { \
+
+    ./configure --prefix=/usr                   \
+            --host=$LFS_TGT                     \
+            --build=$(build-aux/config.guess)   \
+    && make -j4 && make DESTDIR=$LFS install;   \
+}
+
+```
+
+### [Ncurses](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/ncurses.html)
+
+```bash
+cd $LFS/sources
+tar -xf ncurses-6.2.tar.gz 
+cd ncurses-6.2
+sed -i s/mawk// configure
+
+mkdir build
+pushd build
+  ../configure
+  make -C include
+  make -C progs tic
+popd
+
+./configure --prefix=/usr                \
+            --host=$LFS_TGT              \
+            --build=$(./config.guess)    \
+            --mandir=/usr/share/man      \
+            --with-manpage-format=normal \
+            --with-shared                \
+            --without-debug              \
+            --without-ada                \
+            --without-normal             \
+            --enable-widec
+
+
+make -j4
+make DESTDIR=$LFS TIC_PATH=$(pwd)/build/progs/tic install
+echo "INPUT(-lncursesw)" > $LFS/usr/lib/libncurses.so
+mv -v $LFS/usr/lib/libncursesw.so.6* $LFS/lib
+ln -sfv ../../lib/$(readlink $LFS/usr/lib/libncursesw.so) $LFS/usr/lib/libncursesw.so
+```
+
+### [Bash](https://www.linuxfromscratch.org/lfs/view/stable/chapter06/bash.html)
+
+```bash
+cd $LFS/sources
+tar -xf bash-5.1.tar.gz
+cd bash-5.1
+
+./configure --prefix=/usr                   \
+            --build=$(support/config.guess) \
+            --host=$LFS_TGT                 \
+            --without-bash-malloc
+
+make -j4
+make DESTDIR=$LFS install
+mv $LFS/usr/bin/bash $LFS/bin/bash
+ln -sv bash $LFS/bin/sh
+```
+
