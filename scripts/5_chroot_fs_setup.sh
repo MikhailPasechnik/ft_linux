@@ -13,8 +13,13 @@ case $(uname -m) in
   x86_64) sudo chown -R root:root $LFS/lib64 ;;
 esac
 
+sudo umount $LFS/dev/pts || echo ok
+sudo umount $LFS/{sys,proc,run,dev} || echo ok
+
 # https://www.linuxfromscratch.org/lfs/view/stable/chapter07/kernfs.html
 sudo mkdir -pv $LFS/{dev,proc,sys,run}
+sudo rm -rf $LFS/dev/console
+sudo rm -rf $LFS/dev/null
 sudo mknod -m 600 $LFS/dev/console c 5 1
 sudo mknod -m 666 $LFS/dev/null c 1 3
 

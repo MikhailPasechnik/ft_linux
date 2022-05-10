@@ -82,10 +82,10 @@ cd $LFS/sources
 tar -xf glibc-2.35.tar.xz
 cd glibc-2.35
 case $(uname -m) in
-    i?86)   ln -sfv ld-linux.so.2 $LFS/lib/ld-lsb.so.3
+    i?86)   sudo ln -sfv ld-linux.so.2 $LFS/lib/ld-lsb.so.3
     ;;
-    x86_64) ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64
-            ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64/ld-lsb-x86-64.so.3
+    x86_64) sudo ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64
+            sudo ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64/ld-lsb-x86-64.so.3
     ;;
 esac
 patch -Np1 -i ../glibc-2.35-fhs-1.patch
