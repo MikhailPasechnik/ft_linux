@@ -8,6 +8,16 @@ else
     echo "LFS at ${LFS}"
 fi
 
+sudo chown -R root:root $LFS/{usr,lib,var,etc,bin,sbin,tools}
+case $(uname -m) in
+  x86_64) sudo chown -R root:root $LFS/lib64 ;;
+esac
+
+# https://www.linuxfromscratch.org/lfs/view/stable/chapter07/kernfs.html
+sudo mkdir -pv $LFS/{dev,proc,sys,run}
+sudo mknod -m 600 $LFS/dev/console c 5 1
+sudo mknod -m 666 $LFS/dev/null c 1 3
+
 sudo mount -v --bind /dev $LFS/dev
 sudo mount -v --bind /dev/pts $LFS/dev/pts
 sudo mount -vt proc proc $LFS/proc
@@ -22,15 +32,17 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     HOME=/root                  \
     TERM="$TERM"                \
     PS1='(lfs chroot) \u:\w\$ ' \
-    PATH=/bin:/usr/bin:/sbin:/usr/sbin \
+    PATH=/usr/bin:/usr/sbin \
     /bin/bash --login +h -x <<'HEOF'
 set -e
 echo "HELLO FROM CHROOT!"
 mkdir -pv /{boot,home,mnt,opt,srv}
+
 mkdir -pv /etc/{opt,sysconfig}
 mkdir -pv /lib/firmware
 mkdir -pv /media/{floppy,cdrom}
-mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src}
+mkdir -pv /usr/{,local/}{include,src}
+mkdir -pv /usr/local/{bin,lib,sbin}
 mkdir -pv /usr/{,local/}share/{color,dict,doc,info,locale,man}
 mkdir -pv /usr/{,local/}share/{misc,terminfo,zoneinfo}
 mkdir -pv /usr/{,local/}share/man/man{1..8}
@@ -44,16 +56,20 @@ install -dv -m 0750 /root
 install -dv -m 1777 /tmp /var/tmp
 
 # https://www.linuxfromscratch.org/lfs/view/stable/chapter07/createfiles.html
-ln -sfv /proc/self/mounts /etc/mtab
-echo "127.0.0.1 localhost $(hostname)" > /etc/hosts
+ln -sv /proc/self/mounts /etc/mtab
+
+cat > /etc/hosts << EOF
+127.0.0.1  localhost $(hostname)
+::1        localhost
+EOF
 
 cat > /etc/passwd << "EOF"
 root:x:0:0:root:/root:/bin/bash
-bin:x:1:1:bin:/dev/null:/bin/false
-daemon:x:6:6:Daemon User:/dev/null:/bin/false
-messagebus:x:18:18:D-Bus Message Daemon User:/run/dbus:/bin/false
-uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/bin/false
-nobody:x:99:99:Unprivileged User:/dev/null:/bin/false
+bin:x:1:1:bin:/dev/null:/usr/bin/false
+daemon:x:6:6:Daemon User:/dev/null:/usr/bin/false
+messagebus:x:18:18:D-Bus Message Daemon User:/run/dbus:/usr/bin/false
+uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/usr/bin/false
+nobody:x:99:99:Unprivileged User:/dev/null:/usr/bin/false
 EOF
 
 cat > /etc/group << "EOF"
@@ -84,15 +100,11 @@ nogroup:x:99:
 users:x:999:
 EOF
 
-echo "tester:x:1000:101::/home/tester:/bin/bash" >> /etc/passwd
+echo "tester:x:101:101::/home/tester:/bin/bash" >> /etc/passwd
 echo "tester:x:101:" >> /etc/group
+install -o tester -d /home/tester
 
 exec /bin/bash --login +h <<"EOF"
-set -e
-tail /etc/group
-tail /etc/passwd
-
-install -o tester -d /home/tester
 touch /var/log/{btmp,lastlog,faillog,wtmp}
 chgrp -v utmp /var/log/lastlog
 chmod -v 664  /var/log/lastlog
@@ -100,5 +112,6 @@ chmod -v 600  /var/log/btmp
 EOF
 
 HEOF
-sudo umount $LFS/dev{/pts,}
-sudo umount $LFS/{sys,proc,run}
+
+sudo umount $LFS/dev/pts
+sudo umount $LFS/{sys,proc,run,dev}
