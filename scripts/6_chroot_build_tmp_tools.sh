@@ -35,14 +35,14 @@ cd       build3
     --disable-nls                    \
     --host=$(uname -m)-lfs-linux-gnu \
     --disable-libstdcxx-pch
-make -j4
+make 
 make install
 
 cd /sources
 tar -xf gettext-0.21.tar.xz
 cd ./gettext-0.21
 ./configure --disable-shared
-make -j4
+make 
 cp -v gettext-tools/src/{msgfmt,msgmerge,xgettext} /usr/bin
 
 cd /sources
@@ -50,7 +50,7 @@ tar -xf bison-3.7.5.tar.xz
 cd ./bison-3.7.5
 ./configure --prefix=/usr \
             --docdir=/usr/share/doc/bison-3.7.5
-make -j4
+make 
 make install
 
 cd /sources
@@ -65,7 +65,7 @@ sh Configure -des                                        \
              -Dsitearch=/usr/lib/perl5/5.32/site_perl    \
              -Dvendorlib=/usr/lib/perl5/5.32/vendor_perl \
              -Dvendorarch=/usr/lib/perl5/5.32/vendor_perl
-make -j4
+make 
 make install
 
 cd /sources
@@ -74,14 +74,14 @@ cd ./Python-3.9.2
 ./configure --prefix=/usr   \
             --enable-shared \
             --without-ensurepip
-make -j4
+make 
 make install
 
 cd /sources
 tar -xf texinfo-6.7.tar.xz
 cd ./texinfo-6.7
 ./configure --prefix=/usr
-make -j4
+make 
 make install
 
 
@@ -101,7 +101,7 @@ mkdir -pv /var/lib/hwclock
             --disable-static     \
             --without-python     \
             runstatedir=/run
-make -j4
+make 
 make install
 
 find /usr/{lib,libexec} -name \*.la -delete
