@@ -306,6 +306,72 @@ make check
 make install
 install -v -Dm644 doc/I18N-HOWTO /usr/share/doc/intltool-0.51.0/I18N-HOWTO
 
+cd /sources
+tar -xf autoconf-2.71.tar.xz
+cd autoconf-2.71
+./configure --prefix=/usr
+make
+make check
+make install
+
+cd /sources
+tar -xf automake-1.16.5.tar.xz
+cd automake-1.16.5
+./configure --prefix=/usr --docdir=/usr/share/doc/automake-1.16.5
+make
+make -j4 check
+make install
+
+cd /sources
+tar -xf openssl-3.0.1.tar.gz
+cd openssl-3.0.1
+./config --prefix=/usr         \
+         --openssldir=/etc/ssl \
+         --libdir=lib          \
+         shared                \
+         zlib-dynamic
+make
+make test
+sed -i '/INSTALL_LIBS/s/libcrypto.a libssl.a//' Makefile
+make MANSUFFIX=ssl install
+mv -v /usr/share/doc/openssl /usr/share/doc/openssl-3.0.1
+cp -vfr doc/* /usr/share/doc/openssl-3.0.1
+
+cd /sources
+tar -xf kmod-29.tar.xz
+cd kmod-29
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --with-openssl         \
+            --with-xz              \
+            --with-zstd            \
+            --with-zlib
+make
+make install
+
+for target in depmod insmod modinfo modprobe rmmod; do
+  ln -sfv ../bin/kmod /usr/sbin/$target
+done
+
+ln -sfv kmod /usr/bin/lsmod
+
+
+cd /sources
+tar -xf elfutils-0.186.tar.bz2
+cd elfutils-0.186
+./configure --prefix=/usr                \
+            --disable-debuginfod         \
+            --enable-libdebuginfod=dummy
+make
+make check
+make -C libelf install
+install -vm644 config/libelf.pc /usr/lib/pkgconfig
+rm /usr/lib/libelf.a
+
+
+cd /sources
+tar -xf libffi-3.4.2.tar.gz
+
 
 HEOF
 
