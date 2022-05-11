@@ -242,7 +242,7 @@ cd ./flex-2.6.4
             --docdir=/usr/share/doc/flex-2.6.4 \
             --disable-staticmake
 make
-make test
+make check
 make install
 ln -sv flex /usr/bin/lex
 
