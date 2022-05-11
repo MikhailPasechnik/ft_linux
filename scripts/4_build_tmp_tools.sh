@@ -82,10 +82,10 @@ cd $LFS/sources
 tar -xf glibc-2.35.tar.xz
 cd glibc-2.35
 case $(uname -m) in
-    i?86)   sudo ln -sfv ld-linux.so.2 $LFS/lib/ld-lsb.so.3
+    i?86)   ln -sfv ld-linux.so.2 $LFS/lib/ld-lsb.so.3
     ;;
-    x86_64) sudo ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64
-            sudo ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64/ld-lsb-x86-64.so.3
+    x86_64) ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64
+            ln -sfv ../lib/ld-linux-x86-64.so.2 $LFS/lib64/ld-lsb-x86-64.so.3
     ;;
 esac
 patch -Np1 -i ../glibc-2.35-fhs-1.patch
@@ -330,12 +330,13 @@ make
 make DESTDIR=$LFS install
 
 cd $LFS/sources/gcc-11.2.0
+rm -rf mpfr gmp mpc
 tar -xf ../mpfr-4.1.0.tar.xz
-mv -v mpfr-4.1.0 mpfr
+mv -vf mpfr-4.1.0 mpfr
 tar -xf ../gmp-6.2.1.tar.xz
-mv -v gmp-6.2.1 gmp
+mv -vf gmp-6.2.1 gmp
 tar -xf ../mpc-1.2.1.tar.gz
-mv -v mpc-1.2.1 mpc
+mv -vf mpc-1.2.1 mpc
 case $(uname -m) in
   x86_64)
     sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
