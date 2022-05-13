@@ -116,5 +116,3 @@ EOF
 
 HEOF
 
-sudo umount $LFS/dev/pts
-sudo umount $LFS/{sys,proc,run,dev}

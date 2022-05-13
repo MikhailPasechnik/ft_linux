@@ -10,15 +10,6 @@ else
     echo "LFS at ${LFS}"
 fi
 
-sudo mount -v --bind /dev $LFS/dev
-sudo mount -v --bind /dev/pts $LFS/dev/pts
-sudo mount -vt proc proc $LFS/proc
-sudo mount -vt sysfs sysfs $LFS/sys
-sudo mount -vt tmpfs tmpfs $LFS/run
-if [ -h $LFS/dev/shm ]; then
-  sudo mkdir -pv $LFS/$(readlink $LFS/dev/shm)
-fi
-
 sudo chroot "$LFS" /usr/bin/env -i   \
     HOME=/root                  \
     TERM="$TERM"                \
@@ -201,6 +192,7 @@ rm -v /usr/lib/libzstd.a
 cd /sources
 tar -xf file-5.41.tar.gz
 cd ./file-5.41
+./configure --prefix=/usr
 make
 make check
 make install
@@ -396,5 +388,3 @@ make install
 
 HEOF
 
-sudo umount $LFS/dev/pts
-sudo umount $LFS/{sys,proc,run,dev}

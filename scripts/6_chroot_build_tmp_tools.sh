@@ -8,15 +8,6 @@ else
     echo "LFS at ${LFS}"
 fi
 
-sudo mount -v --bind /dev $LFS/dev
-sudo mount -v --bind /dev/pts $LFS/dev/pts
-sudo mount -vt proc proc $LFS/proc
-sudo mount -vt sysfs sysfs $LFS/sys
-sudo mount -vt tmpfs tmpfs $LFS/run
-if [ -h $LFS/dev/shm ]; then
-  sudo mkdir -pv $LFS/$(readlink $LFS/dev/shm)
-fi
-
 sudo chroot "$LFS" /usr/bin/env -i   \
     HOME=/root                  \
     TERM="$TERM"                \
@@ -24,7 +15,10 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     PATH=/usr/bin:/usr/sbin \
     /bin/bash --login +h -x <<'HEOF'
 set -e
-cd /sources/gcc-11.2.0
+
+cd /sources
+tar -xf gcc-11.2.0.tar.xz
+cd gcc-11.2.0
 ln -sf gthr-posix.h libgcc/gthr-default.h
 mkdir -vp build3
 cd build3
@@ -112,5 +106,3 @@ find /usr/{lib,libexec} -name \*.la -delete
 rm -rf /tools
 HEOF
 
-sudo umount $LFS/dev/pts
-sudo umount $LFS/{sys,proc,run,dev}
