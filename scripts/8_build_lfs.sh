@@ -77,11 +77,13 @@ cd       build5
              --disable-bootstrap      \
              --with-system-zlib
 make
+if [[ ! -z "${DOTEST}" ]]; then
 ulimit -s 32768
 
 chown -Rv tester .
 su tester -c "PATH=$PATH make -k check" || echo ok
 ../contrib/test_summary | grep -A7 Summ
+fi
 make install
 rm -rf /usr/lib/gcc/$(gcc -dumpmachine)/11.2.0/include-fixed/bits/
 chown -v -R root:root \
