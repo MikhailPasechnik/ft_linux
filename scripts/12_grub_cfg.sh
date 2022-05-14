@@ -18,7 +18,7 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     PATH=/usr/bin:/usr/sbin \
     /bin/bash --login +h -x <<'HEOF'
 
-grub-install /dev/vda
+grub-install /dev/vdb
 
 cat > /boot/grub/grub.cfg << "EOF"
 # Begin /boot/grub/grub.cfg
