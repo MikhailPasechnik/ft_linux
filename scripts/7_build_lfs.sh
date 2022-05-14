@@ -18,6 +18,7 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     /bin/bash --login +h -x <<'HEOF'
 set -e
 export MAKEFLAGS="-j6"
+export DOTEST=
 
 cd /sources
 tar -xf man-pages-5.13.tar.xz
@@ -45,7 +46,9 @@ echo "rootsbindir=/usr/sbin" > configparms
              --with-headers=/usr/include              \
              libc_cv_slibdir=/usr/lib
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check || true
+fi
 touch /etc/ld.so.conf
 sed '/test-installation/s@$(PERL)@echo not running@' -i ../Makefile
 make install
@@ -149,7 +152,9 @@ tar -xf zlib-1.2.12.tar.xz
 cd ./zlib-1.2.12
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 rm -fv /usr/lib/libz.a
 
@@ -178,14 +183,18 @@ cd ./xz-5.2.5
             --disable-static \
             --docdir=/usr/share/doc/xz-5.2.5
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
 tar -xf zstd-1.5.2.tar.gz
 cd ./zstd-1.5.2
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make prefix=/usr install
 rm -v /usr/lib/libzstd.a
 
@@ -194,7 +203,9 @@ tar -xf file-5.41.tar.gz
 cd ./file-5.41
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 
@@ -216,7 +227,9 @@ tar -xf m4-1.4.19.tar.xz
 cd ./m4-1.4.19
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -224,7 +237,9 @@ tar -xf bc-5.2.2.tar.xz
 cd ./bc-5.2.2
 CC=gcc ./configure --prefix=/usr -G -O3
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make test
+fi
 make install
 
 cd /sources
@@ -234,7 +249,9 @@ cd ./flex-2.6.4
             --docdir=/usr/share/doc/flex-2.6.4 \
             --disable-staticmake
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 ln -sv flex /usr/bin/lex
 
@@ -265,7 +282,9 @@ sed -e "s|$SRCDIR/unix/pkgs/itcl4.2.2|/usr/lib/itcl4.2.2|" \
     -i pkgs/itcl4.2.2/itclConfig.sh
 
 unset SRCDIR
+if [[ ! -z "${DOTEST}" ]]; then
 make test
+fi
 make install
 chmod -v u+w /usr/lib/libtcl8.6.so
 make install-private-headers
@@ -284,7 +303,9 @@ cd ./expect5.45.4
             --mandir=/usr/share/man \
             --with-tclinclude=/usr/include
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make test
+fi
 make install
 ln -svf expect5.45.4/libexpect5.45.4.so /usr/lib
 
@@ -299,7 +320,9 @@ makeinfo --plaintext       -o doc/dejagnu.txt  ../doc/dejagnu.texi
 make install
 install -v -dm755  /usr/share/doc/dejagnu-1.6.3
 install -v -m644   doc/dejagnu.{html,txt} /usr/share/doc/dejagnu-1.6.3
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 
 cd /sources
 tar -xf binutils-2.38.tar.xz
@@ -320,7 +343,9 @@ cd       build4
              --enable-64-bit-bfd \
              --with-system-zlib
 make tooldir=/usr
+if [[ ! -z "${DOTEST}" ]]; then
 make -k check
+fi
 make tooldir=/usr install
 rm -fv /usr/lib/lib{bfd,ctf,ctf-nobfd,opcodes}.a
 
@@ -334,8 +359,10 @@ cd ./gmp-6.2.1
             --docdir=/usr/share/doc/gmp-6.2.1
 make
 make html
+if [[ ! -z "${DOTEST}" ]]; then
 make check 2>&1 | tee gmp-check-log
 awk '/# PASS:/{total+=$3} ; END{print total}' gmp-check-log
+fi
 make install
 make install-html
 
@@ -348,7 +375,9 @@ cd ./mpfr-4.1.0
             --docdir=/usr/share/doc/mpfr-4.1.0
 make
 make html
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 make install-html
 
@@ -360,7 +389,9 @@ cd ./mpc-1.2.1
             --docdir=/usr/share/doc/mpc-1.2.1
 make
 make html
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 make install-html
 
@@ -373,7 +404,9 @@ cd ./attr-2.5.1
             --docdir=/usr/share/doc/attr-2.5.1
 
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
