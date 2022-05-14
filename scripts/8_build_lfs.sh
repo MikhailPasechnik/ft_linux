@@ -19,13 +19,16 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     /bin/bash --login +h -x <<'HEOF'
 set -e
 export MAKEFLAGS="-j6"
+export DOTEST=
 
 cd /sources
 tar -xf libcap-2.63.tar.xz
 cd ./libcap-2.63
 sed -i '/install -m.*STA/d' libcap/Makefile
 make prefix=/usr lib=lib
+if [[ ! -z "${DOTEST}" ]]; then
 make test
+fi
 make prefix=/usr lib=lib install
 
 cd /sources
@@ -97,7 +100,9 @@ cd ./pkg-config-0.29.2
             --disable-host-tool        \
             --docdir=/usr/share/doc/pkg-config-0.29.2
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -133,8 +138,10 @@ cd ./sed-4.8
 ./configure --prefix=/usr
 make
 make html
+if [[ ! -z "${DOTEST}" ]]; then
 chown -Rv tester .
 su tester -c "PATH=$PATH make check"
+fi
 make install
 install -d -m755           /usr/share/doc/sed-4.8
 install -m644 doc/sed.html /usr/share/doc/sed-4.8
@@ -153,7 +160,9 @@ cd ./gettext-0.21
             --disable-static \
             --docdir=/usr/share/doc/gettext-0.21
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 chmod -v 0755 /usr/lib/preloadable_libintl.so
 
@@ -162,7 +171,9 @@ tar -xf bison-3.8.2.tar.xz
 cd bison-3.8.2
 ./configure --prefix=/usr --docdir=/usr/share/doc/bison-3.8.2
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -170,7 +181,9 @@ tar -xf grep-3.7.tar.xz
 cd grep-3.7
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -181,6 +194,7 @@ cd bash-5.1.16
             --without-bash-malloc              \
             --with-installed-readline
 make
+if [[ ! -z "${DOTEST}" ]]; then
 chown -Rv tester .
 su -s /usr/bin/expect tester << EOF
 set timeout -1
@@ -189,6 +203,7 @@ expect eof
 lassign [wait] _ _ _ value
 exit $value
 EOF
+fi
 make install
 exec /usr/bin/bash --login
 
@@ -197,7 +212,9 @@ tar -xf libtool-2.4.6.tar.xz
 cd libtool-2.4.6
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 rm -fv /usr/lib/libltdl.a
 
@@ -208,7 +225,9 @@ cd gdbm-1.23
             --disable-static \
             --enable-libgdbm-compat
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -216,7 +235,9 @@ tar -xf gperf-3.1.tar.gz
 cd gperf-3.1
 ./configure --prefix=/usr --docdir=/usr/share/doc/gperf-3.1
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make -j1 check
+fi
 make install
 
 cd /sources
@@ -226,7 +247,9 @@ cd expat-2.4.6
             --disable-static \
             --docdir=/usr/share/doc/expat-2.4.6
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 install -v -m644 doc/*.{html,css} /usr/share/doc/expat-2.4.6
 
@@ -244,7 +267,9 @@ cd inetutils-2.2
             --disable-rsh        \
             --disable-servers
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 mv -v /usr/{,s}bin/ifconfig
 
@@ -276,7 +301,9 @@ sh Configure -des                                         \
              -Duseshrplib                                 \
              -Dusethreads
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make test
+fi
 make install
 unset BUILD_ZLIB BUILD_BZIP2
 
@@ -285,7 +312,9 @@ tar -xf Xml-Parser-2.46.tar.gz
 cd Xml-Parser-2.46
 perl Makefile.PL
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make test
+fi
 make install
 
 cd /sources
@@ -294,7 +323,9 @@ cd intltool-0.51.0
 sed -i 's:\\\${:\\\$\\{:' intltool-update.in
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 install -v -Dm644 doc/I18N-HOWTO /usr/share/doc/intltool-0.51.0/I18N-HOWTO
 
@@ -303,7 +334,9 @@ tar -xf autoconf-2.71.tar.xz
 cd autoconf-2.71
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -311,7 +344,9 @@ tar -xf automake-1.16.5.tar.xz
 cd automake-1.16.5
 ./configure --prefix=/usr --docdir=/usr/share/doc/automake-1.16.5
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make -j4 check
+fi
 make install
 
 cd /sources
@@ -323,7 +358,9 @@ cd openssl-3.0.1
          shared                \
          zlib-dynamic
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make test
+fi
 sed -i '/INSTALL_LIBS/s/libcrypto.a libssl.a//' Makefile
 make MANSUFFIX=ssl install
 mv -v /usr/share/doc/openssl /usr/share/doc/openssl-3.0.1
@@ -355,7 +392,9 @@ cd elfutils-0.186
             --disable-debuginfod         \
             --enable-libdebuginfod=dummy
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make -C libelf install
 install -vm644 config/libelf.pc /usr/lib/pkgconfig
 rm /usr/lib/libelf.a
@@ -369,7 +408,9 @@ cd libffi-3.4.2
             --with-gcc-arch=native \
             --disable-exec-static-tramp
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -426,11 +467,13 @@ FORCE_UNSAFE_CONFIGURE=1 ./configure \
             --prefix=/usr            \
             --enable-no-install-program=kill,uptime
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make NON_ROOT_USERNAME=tester check-root
 echo "dummy:x:102:tester" >> /etc/group
 chown -Rv tester . 
 su tester -c "PATH=$PATH make RUN_EXPENSIVE_TESTS=yes check"
 sed -i '/dummy/d' /etc/group
+fi
 make install
 mv -v /usr/bin/chroot /usr/sbin
 mv -v /usr/share/man/man1/chroot.1 /usr/share/man/man8/chroot.8
@@ -441,7 +484,9 @@ tar -xf check-0.15.2.tar.gz
 cd check-0.15.2
 ./configure --prefix=/usr --disable-static
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make docdir=/usr/share/doc/check-0.15.2 install
 
 cd /sources
@@ -449,7 +494,9 @@ tar -xf diffutils-3.8.tar.xz
 cd diffutils-3.8
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -458,7 +505,9 @@ cd gawk-5.1.1
 sed -i 's/extras//' Makefile.in
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 mkdir -pv                                   /usr/share/doc/gawk-5.1.1
 cp    -v doc/{awkforai.txt,*.{eps,pdf,jpg}} /usr/share/doc/gawk-5.1.1
@@ -471,8 +520,10 @@ case $(uname -m) in
     x86_64) ./configure --prefix=/usr --localstatedir=/var/lib/locate ;;
 esac
 make
+if [[ ! -z "${DOTEST}" ]]; then
 chown -Rv tester .
 su tester -c "PATH=$PATH make check"
+fi
 make install
 
 cd /sources
@@ -498,7 +549,9 @@ tar -xf gzip-1.11.tar.xz
 cd gzip-1.11
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -519,7 +572,9 @@ sed -i '/RESIZECONS_PROGS=/s/yes/no/' configure
 sed -i 's/resizecons.8 //' docs/man/man8/Makefile.in
 ./configure --prefix=/usr --disable-vlock
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -527,7 +582,9 @@ tar -xf libpipeline-1.5.5.tar.gz
 cd libpipeline-1.5.5
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -535,7 +592,9 @@ tar -xf make-4.3.tar.gz
 cd make-4.3
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -543,7 +602,9 @@ tar -xf patch-2.7.6.tar.xz
 cd patch-2.7.6
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -552,7 +613,9 @@ cd tar-1.34
 FORCE_UNSAFE_CONFIGURE=1  \
 ./configure --prefix=/usr
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 make -C doc install-html docdir=/usr/share/doc/tar-1.34
 
@@ -563,7 +626,9 @@ cd texinfo-6.8
 sed -e 's/__attribute_nonnull__/__nonnull/' \
     -i gnulib/lib/malloc/dynarray-skeleton.c
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 make TEXMF=/usr/share/texmf install-tex
 pushd /usr/share/info
@@ -579,9 +644,11 @@ cd vim-8.2.4383
 echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
 ./configure --prefix=/usr
 make
+
 # TODO: Tests stuck
 # chown -Rv tester .
 # su tester -c "LANG=en_US.UTF-8 make -j1 test" &> vim-test.log
+
 make install
 ln -sv vim /usr/bin/vi
 for L in  /usr/share/man/{,*/}man1/vim.1; do
@@ -617,7 +684,9 @@ cd eudev-3.2.11
 make
 mkdir -pv /usr/lib/udev/rules.d
 mkdir -pv /etc/udev/rules.d
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 tar -xvf ../udev-lfs-20171102.tar.xz
 make -f udev-lfs-20171102/Makefile.lfs install
@@ -637,7 +706,9 @@ cd man-db-2.10.1
             --with-systemdtmpfilesdir=            \
             --with-systemdsystemunitdir=
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -648,7 +719,9 @@ cd procps-ng-4.0.0
             --disable-static                         \
             --disable-kill
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 
 cd /sources
@@ -689,7 +762,9 @@ cd       build
              --disable-uuidd         \
              --disable-fsck
 make
+if [[ ! -z "${DOTEST}" ]]; then
 make check
+fi
 make install
 rm -fv /usr/lib/{libcom_err,libe2p,libext2fs,libss}.a
 gunzip -v /usr/share/info/libext2fs.info.gz

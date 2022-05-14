@@ -15,6 +15,7 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     PATH=/usr/bin:/usr/sbin \
     /bin/bash --login +h -x <<'HEOF'
 set -e
+export MAKEFLAGS="-j6"
 
 cd /sources
 tar -xf gcc-11.2.0.tar.xz
