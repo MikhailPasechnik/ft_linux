@@ -23,7 +23,7 @@
         <suspend-to-disk enabled='no'/>
     </pm>
     <devices>
-        <emulator>/opt/homebrew/bin/qemu-system-x86_64</emulator>
+        <emulator>/usr/bin/qemu-system-x86_64</emulator>
         <controller type='usb' model='ehci'/>
         <disk type='file' device='disk'>
             <driver name='qemu' type='qcow2'/>
