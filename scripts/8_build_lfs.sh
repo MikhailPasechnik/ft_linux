@@ -10,6 +10,7 @@ else
     echo "LFS at ${LFS}"
 fi
 
+find $LFS/sources/*.tar.* | sed -e "s/\.tar\..*//" | xargs sudo rm -rf
 
 sudo chroot "$LFS" /usr/bin/env -i   \
     HOME=/root                  \
@@ -18,7 +19,7 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     PATH=/usr/bin:/usr/sbin \
     /bin/bash --login +h -x <<'HEOF'
 set -e
-export MAKEFLAGS="-j6"
+export MAKEFLAGS="-j7"
 export DOTEST=
 
 cd /sources
@@ -93,6 +94,7 @@ ln -sfv ../../libexec/gcc/$(gcc -dumpmachine)/11.2.0/liblto_plugin.so \
         /usr/lib/bfd-plugins/
 mkdir -pv /usr/share/gdb/auto-load/usr/lib
 mv -v /usr/lib/*gdb.py /usr/share/gdb/auto-load/usr/lib
+find /sources/*.tar.* | sed -e "s/\.tar\..*//" | xargs rm -rf
 
 cd /sources
 tar -xf pkg-config-0.29.2.tar.gz
@@ -806,4 +808,6 @@ make install
 
 
 HEOF
+
+find $LFS/sources/*.tar.* | sed -e "s/\.tar\..*//" | xargs sudo rm -rf
 

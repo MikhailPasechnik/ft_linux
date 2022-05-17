@@ -9,6 +9,7 @@ if [[ -z "${LFS}" ]]; then
 else
     echo "LFS at ${LFS}"
 fi
+find $LFS/sources/*.tar.* | sed -e "s/\.tar\..*//" | xargs sudo rm -rf
 
 sudo chroot "$LFS" /usr/bin/env -i   \
     HOME=/root                  \

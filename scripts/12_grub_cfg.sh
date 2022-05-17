@@ -18,7 +18,7 @@ sudo chroot "$LFS" /usr/bin/env -i   \
     PATH=/usr/bin:/usr/sbin \
     /bin/bash --login +h -x <<'HEOF'
 
-grub-install /dev/vdb
+grub-install --target i386-pc --force /dev/vdb
 
 cat > /boot/grub/grub.cfg << "EOF"
 # Begin /boot/grub/grub.cfg
@@ -26,7 +26,7 @@ set default=0
 set timeout=5
 
 insmod ext2
-set root=(hd0,2)
+set root=(hd0,gpt1)
 
 menuentry "GNU/Linux, Linux 5.16.9-lfs-11.1" {
         linux   /boot/vmlinuz-5.16.9-lfs-11.1 root=/dev/vda1 ro

@@ -7,6 +7,7 @@ if [[ -z "${LFS}" ]]; then
 else
     echo "LFS at ${LFS}"
 fi
+find $LFS/sources/*.tar.* | sed -e "s/\.tar\..*//" | xargs sudo rm -rf
 
 sudo chown -R root:root $LFS/{usr,lib,var,etc,bin,sbin,tools}
 case $(uname -m) in
