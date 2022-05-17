@@ -1,4 +1,4 @@
-## Building from scratch
+## Building and running [Linux From Scratch Version 11.1](https://www.linuxfromscratch.org/lfs/view/11.1/) inside Qemu/KVM
 
 We will use Qemu and Libvirt VM to ensure compatibility with Mac's with m1 chip where virtualbox is not available. But it is highly recommended to use x86_64 system for native virtualization with KVM
 
